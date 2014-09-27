@@ -56,43 +56,43 @@ Percentage_of_bla_dark = 100*blackPixArray./darkregionPixArray;
 Percentage_of_bla_brown = 100*blackPixArray./brownPixArray;
 
 figure,plot(blackPixArray);
-xlabel('frame');
+xlabel('Second');
 ylabel('numbers of Black pixels');
-title('The Black pixels with frame' );
+title('The Black pixels with Second' );
 
 figure,plot(brownPixArray);
-xlabel('frame');
+xlabel('Second');
 ylabel('numbers of Brown pixels');
-title('The Brown pixels with frame' );
+title('The Brown pixels with Second' );
 
 figure,plot(darkregionPixArray);
-xlabel('frame');
+xlabel('Second');
 ylabel('numbers of DarkRegion pixels');
-title('The DarkRegion pixels with frame' );
+title('The DarkRegion pixels with Second' );
 
 figure,plot(Percentage_of_bla_dark);
-xlabel('frame');
+xlabel('Second');
 ylabel('Percentage');
-title('The Percentage with frame for Black/Dark');
+title('The Percentage with Second for Black/Dark');
 
 figure,plot(Percentage_of_bla_brown);
-xlabel('frame');
+xlabel('Second');
 ylabel('Percentage');
-title('The Percentage with frame for Black/Brown');
+title('The Percentage with Second for Black/Brown');
 
 %Put the figures together to compare
 figure,plot(blackPixArray,'k');
-xlabel('frame');
+xlabel('Second');
 ylabel('numbers of pixels');
-title('The pixels with frame,Black for BlackPix,Red for DarkPix,Blue for BrownPix');
+title('The pixels with Second,Black for BlackPix,Red for DarkPix,Blue for BrownPix');
 hold on;
 plot(brownPixArray,'b');
 plot(darkregionPixArray,'r');
 hold off;
 figure,plot(Percentage_of_bla_dark,'k');
-xlabel('frame');
+xlabel('Second');
 ylabel('Percentage');
-title('The Percentage with frame,Black for Black/Dark,Blue for Black/Brown');
+title('The Percentage with Second,Black for Black/Dark,Blue for Black/Brown');
 hold on ;
 plot(Percentage_of_bla_brown,'b');
 hold off ;
