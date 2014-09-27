@@ -1,0 +1,25 @@
+Read me ***I sent the pictures file to your UVA webmail. The result can be checked.*** 
+1.	In some pictures, I key in the wrong word ‘frame’ in the X label and the title.
+The word ‘frame’ should be ‘Second’.
+2.	In the three Mp4 , they move the camera at 8:30 (510sec)for 1000pg.mp4
+                                   7:55(475sec) for 125pg.mp4
+                                   8:20(500sec) for 0pg.mp4
+This movement makes a large effect of 125pg and 0pg.
+And also make an effect of 1000pg.
+3.	We can find that T1=1.5 T2=2.5 maybe can be a better choice.
+4.	In the three MP4, the dropping occur at 2:26(146sec) for 0pg.mp4
+                                 1:27(87sec) for 125pg.mp4
+                                 1:42(102sec) for 1000pg.mp4
+5.	The region we want in the three mp4, their position are the same.
+So we do not have to change the crop region. (I had checked it.)
+6.	We can consider the same T1.T2 for the three mp4. Or make them different from each other. I think the same T is better.
+7.	The objects of three M.file are that:
+ Exp_for_mp4.m: The new code for computing different pixels and plot the result.
+ Exp_different_T_for_blackpix.m: Using different T1 to plot the result of blackPix and the % of Black/Dark.
+EXP_Find_a_appropriate_T.m: Using different colors to recognize different gray scale in the frame to find the appropriate T by eyes. I think this file is not important after I used different T to plot the result. But you guys can try to check it by this file.    
+
+
+
+I forgot that I have a Midterm Exam in Monday Night. I try to do all I can do for this Exp.
+
+Andrew 
