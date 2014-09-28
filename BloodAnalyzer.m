@@ -1,9 +1,16 @@
 % Names: Ishan Zaman, Matthew Ridder, and Andrew Chen
-% Computing IDs: iuz8fn, mjr3vk, and ac9kr
-% Assignment: Experiment 1
+% Computing IDs: iuz8fn, mjr3vk, ac9kr
+% Experiment 1
+
+clear;
+clc;
 
 % Request filename from user
 filename = input('Enter the filename of the video to analyze: ', 's');
+
+% Set a flag for whether to quantify clumping
+countClumps = strcmpi('1000+pg+-+Post-RMF+AdditionSmall.mp4', filename) ...
+    | strcmpi('1000.mp4', filename);
 
 % Read in video
 video = VideoReader(filename);
@@ -63,12 +70,22 @@ for n=startFrame:rate:numFrames
     blackPixArray = [blackPixArray, blackPix];
     
     % Count the number of clumps
+    if countClumps
+        clumps = im2bw(frame, 0.25);
+        clumps = medfilt2(clumps);
+        clumps = imclose(clumps, strel('disk', 10));
+        clumps = imopen(clumps, strel('disk', 3));
+        CC = bwconncomp(~clumps, 4);
+        numComponents = [numComponents CC.NumObjects];
+        imshow(clumps);
+    end
     
 end
 
 % Counts the percentage of blackPixs / original brownPix
 blackToBrown = 100*(blackPixArray/brownPix);
 
+% Plot graphs
 figure,plot(blackPixArray);
 xUnits = get(gca,'xtick');
 set(gca,'xticklabel',round(((startFrame + xUnits * rate)/numFrames)...
@@ -84,6 +101,17 @@ set(gca,'xticklabel',round(((startFrame + xUnits * rate)/numFrames)...
 xlabel('Seconds');
 ylabel('Percentage');
 title('Black Pixel Percentage based on Original Brown Area');
+
+if countClumps
+    figure,plot(numComponents);
+    xUnits = get(gca,'xtick');
+    set(gca,'xticklabel',round(((startFrame + xUnits * rate)/numFrames)...
+        * totalTime));
+    set(gca,'YTickLabel', 1:1:10)
+    xlabel('Seconds');
+    ylabel('Clumps');
+    title('Number of Clumps in Video' );
+end
 
 % Find and display min dark region area
 minRegionArea = min(blackPixArray(2:length(blackPixArray)));
@@ -113,4 +141,3 @@ errorStr = num2str(minRegionError);
 errorStrFinal = strcat({'The error after 30 seconds is '}, ...
     errorStr, {' percent.'});
 display(errorStrFinal);
-
