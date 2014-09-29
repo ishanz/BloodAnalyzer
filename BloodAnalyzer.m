@@ -4,6 +4,7 @@
 
 clear;
 clc;
+iptsetpref('ImshowBorder','tight');
 
 % Request filename from user
 filename = input('Enter the filename of the video to analyze: ', 's');
@@ -29,19 +30,27 @@ totalTime = numFrames/frameRate;
 startFrame = round((numFrames/totalTime)*(dnaEntry1Min*60 + dnaEntry1Sec));
 
 % Variables
-rate = 200;
+rate = 1000;
 brownPix = 0;
 blackPix = 0;
 blackPixArray = [];
 numComponents = [];
 
+% Values for clump analysis
+isDark = false;
+tDarkInSeconds = 0;
+sampleNumber = 0;
+sampleNumberOfDarkFrame = 0;
+
 % Loops through video at a rate of 1 Hz (right now it's higher for testing)
 for n=startFrame:rate:numFrames
+    sampleNumber = sampleNumber + 1;
     blackPix = 0;
     
     % Crops the frame to give region of interest
     uncroppedFrame = read(video, n);
     frame = imcrop(uncroppedFrame, [55 0 315 250]);
+    colorFrame = frame;
     frame = rgb2gray(frame);
     
     % Counts the number of brown pixels at the starting frame (t = 0)
@@ -69,15 +78,35 @@ for n=startFrame:rate:numFrames
     end
     blackPixArray = [blackPixArray, blackPix];
     
-    % Count the number of clumps
+    % Perform clump analysis to find time
+    % where clumps are sufficiently dark
     if countClumps
+        % Extract RGB values
+        reds = colorFrame(:, :, 1);
+        greens = colorFrame(:, :, 2);
+        blues = colorFrame(:, :, 3);
+        
+        % Compute luminance
+        luminance = 0.2126*reds + 0.7152*greens + 0.0722*blues;
+        
+        % Count the number of pixels darker than an intensity threshold
+        numPixelsDarkEnough = numel(luminance(luminance < 15));
+        
+        % If the counted number meets count condition, mark the time
+        if numPixelsDarkEnough > 200 ...
+                && isDark == false && tDarkInSeconds == 0
+            isDark = true;
+            tDarkInSeconds = n/frameRate;
+            sampleNumberOfDarkFrame = sampleNumber;
+        end
+        
+        % Count the number of clumps
         clumps = im2bw(frame, 0.25);
         clumps = medfilt2(clumps);
         clumps = imclose(clumps, strel('disk', 10));
         clumps = imopen(clumps, strel('disk', 3));
         CC = bwconncomp(~clumps, 4);
         numComponents = [numComponents CC.NumObjects];
-        imshow(clumps);
     end
     
 end
@@ -103,11 +132,13 @@ ylabel('Percentage');
 title('Black Pixel Percentage based on Original Brown Area');
 
 if countClumps
-    figure,plot(numComponents);
+    figure;
+    hold on;
+    plot(numComponents, 'r+');
     xUnits = get(gca,'xtick');
     set(gca,'xticklabel',round(((startFrame + xUnits * rate)/numFrames)...
         * totalTime));
-    set(gca,'YTickLabel', 1:1:10)
+    hold off;
     xlabel('Seconds');
     ylabel('Clumps');
     title('Number of Clumps in Video' );
