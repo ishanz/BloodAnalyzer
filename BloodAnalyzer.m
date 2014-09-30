@@ -134,7 +134,8 @@ title('Black Pixel Percentage based on Original Brown Area');
 if countClumps
     figure;
     hold on;
-    plot(numComponents, 'r+');
+    plot(numComponents);
+    plot(sampleNumberOfDarkFrame, numComponents(sampleNumberOfDarkFrame), 'h');
     xUnits = get(gca,'xtick');
     set(gca,'xticklabel',round(((startFrame + xUnits * rate)/numFrames)...
         * totalTime));
@@ -145,7 +146,8 @@ if countClumps
 end
 
 % Find and display min dark region area
-minRegionArea = min(blackPixArray(2:length(blackPixArray)));
+lastFramesIndex = round(((numFrames/totalTime)*120)/rate); %ADD THIS
+minRegionArea = min(blackPixArray(2:(length(blackPixArray) - lastFramesIndex)));
 areaStr = num2str(minRegionArea);
 areaStrFinal = strcat({'The minimum dark region area is '} , ...
     areaStr, { ' pixels.'});
@@ -153,6 +155,7 @@ display(areaStrFinal);
 
 % Find and display time at which min dark region area occurs
 minRegionIndex = find(blackPixArray == minRegionArea);
+minRegionIndex = minRegionIndex(1);
 minRegionTime = round(((startFrame + minRegionIndex * rate)/ ...
     numFrames)*totalTime);
 minRegionMins = floor(minRegionTime/60);
